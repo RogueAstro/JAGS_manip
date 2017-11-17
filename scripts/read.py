@@ -47,23 +47,24 @@ class Posterior(object):
                                      self.limit[i, 0]:self.limit[i, 1] + 1]
 
     # Print some simple statistics
-    def print_stats(self, variable, percentile):
+    def print_stats(self, variable):
         """
         Print the mean, standard deviation and a specific percentile of a
         specific variable in the chain.
 
         Args:
             variable (`str`): Variable name.
-            percentile (`int`): Percentile.
+            percentile (`float`): Percentile.
         """
         mean = np.mean(self.chain[variable])
         std = np.std(self.chain[variable])
-        perc = np.percentile(self.chain[variable], q=percentile)
+        perc_l = np.percentile(self.chain[variable], q=2.5)
+        perc_h = np.percentile(self.chain[variable], q=97.5)
 
         # And then just print them
         print('Mean of `%s` = %f' % (variable, mean))
         print('Standard deviation of `%s` = %f' % (variable, std))
-        print('Percentile %i of `%s` = %f' % (percentile, variable, perc))
+        print('Interval containing 95 percent = [%f, %f]' % (perc_l, perc_h))
 
     # Make a trace plot
     def plot_trace(self, variable, output=None, x_range=None, y_range=None):
@@ -182,12 +183,14 @@ class Posterior(object):
 
 # Test
 if __name__ == '__main__':
-    _path_index = '../CODAindex_fakesampleregr.txt'
-    _path_chain = '../CODAchain_fakesampleregr.txt'
+    _path_index = '../CODAindex.txt'
+    _path_chain = '../CODAchain1.txt'
+    #_path_index = '../CODAindex_fakesampleregr.txt'
+    #_path_chain = '../CODAchain_fakesampleregr.txt'
     chain = Posterior(_path_index, _path_chain)
 
-    #chain.print_stats('x', 95)
+    chain.print_stats('s', 97.5)
     #chain.plot_trace('s', x_range=(0, 5000))
     #_hist, _bins = chain.compute_hist('s', n_bins=100, plot=True)
-    #chain.plot_contour()
-    chain.binned_data('obsx[1]', 'obsx[2]', 5)
+    chain.plot_contour()
+    #chain.binned_data('obsx[1]', 'obsx[2]', 5)
